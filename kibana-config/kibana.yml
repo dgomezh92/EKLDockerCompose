@@ -1,0 +1,10 @@
+server.name: kibana
+server.host: "0.0.0.0"
+server.ssl.enabled: true
+server.ssl.certificate: /usr/share/kibana/config/certs/kibana.crt
+server.ssl.key: /usr/share/kibana/config/certs/kibana.key
+elasticsearch.ssl.certificateAuthorities: [/usr/share/kibana/config/certs/kibana-server.crt ]
+elasticsearch.ssl.verificationMode: none
+elasticsearch.serviceAccountToken: "AAEAAWVsYXN0aWMva2liYW5hL2RlZmF1bHQ6Q1RHSHhVVWhUVk9iajRHeTJwS3FVQQ"
+
+

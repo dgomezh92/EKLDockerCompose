@@ -1,0 +1,90 @@
+version: '3.7'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.3.0
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch-node1
+      - cluster.name=elk-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      #configuracion SSL 
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certs/elasticsearch.key
+      - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certs/elasticsearch.crt
+      - xpack.security.http.ssl.certificate_authorities=/usr/share/elasticsearch/config/certs/ca.crt
+      - xpack.security.http.ssl.client_authentication=optional
+      - xpack.security.enabled=true  # Habilita la seguridad en Elasticsearch
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTIC_PASSWORD=tu_contraseña_elastic  # Configura la contraseña del usuario elastic
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elasticsearch-data:/usr/share/elasticsearch/data
+      - ./elasticsearch-config:/usr/share/elasticsearch/config
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.3.0
+    container_name: logstash
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    volumes:
+      - ./logstash-config:/usr/share/logstash/config
+      - ./logstash-pipeline:/usr/share/logstash/pipeline
+    ports:
+      - "5000:5000"
+      - "9600:9600"
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.3.0
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      # - ELASTICSEARCH_USERNAME=elastic
+      # - ELASTICSEARCH_PASSWORD=tu_contraseña_elastic
+      - xpack.security.encryptionKey="una_clave_super_secreta_de_al_menos_32_caracteres"
+      - xpack.encryptedSavedObjects.encryptionKey="otra_clave_super_secreta_de_al_menos_32_caracteres"
+      - xpack.reporting.encryptionKey="una_tercera_clave_super_secreta_de_al_menos_32_caracteres"
+      # - SERVER_SSL_ENABLED=true
+      - SERVER_SSL_CERTIFICATE=/usr/share/kibana/config/certs/kibana-server.crt
+      - SERVER_SSL_KEY=/usr/share/kibana/config/certs/kibana-server.key
+      - ELASTICSEARCH_SERVICE_TOKEN=AAEAAWVsYXN0aWMva2liYW5hL2RlZmF1bHQ6Q1RHSHhVVWhUVk9iajRHeTJwS3FVQQ
+    volumes:
+      - ./kibana-data:/usr/share/kibana/data
+      - ./kibana-config:/usr/share/kibana/config  # Asegúrate de tener el archivo kibana.yml en el directorio ./kibana-config en tu host
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+# SERVICE_TOKEN elastic/kibana/default = AAEAAWVsYXN0aWMva2liYW5hL2RlZmF1bHQ6Q1RHSHhVVWhUVk9iajRHeTJwS3FVQQ
+# mkdir -p kibana-config/certs
+# openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout kibana-config/certs/kibana-server.key -out kibana-config/certs/kibana-server.crt -subj "/CN=kibana"
+
+#Elastic
+# openssl genpkey -algorithm RSA -out ./elasticsearch-config/certs/ca.key
+# openssl req -x509 -new -nodes -key ./elasticsearch-config/certs/ca.key -sha256 -days 365 -out ./elasticsearch-config/certs/ca.crt -subj "/CN=elasticsearch"
+# openssl genpkey -algorithm RSA -out ./elasticsearch-config/certs/elasticsearch.key
+# openssl req -new -key ./elasticsearch-config/certs/elasticsearch.key -out ./elasticsearch-config/certs/elasticsearch.csr -subj "/CN=elasticsearch"
+# openssl x509 -req -in ./elasticsearch-config/certs/elasticsearch.csr -CA ./elasticsearch-config/certs/ca.crt -CAkey ./elasticsearch-config/certs/ca.key -CAcreateserial -out ./elasticsearch-config/certs/elasticsearch.crt -days 365 -sha256
+# sudo chmod -R 777 ./elasticsearch-config
+# nano ./elasticsearch-config/jvm.options
+
+
+
+#Kiba
+# openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./kibana-config/certs/kibana-server.key -out ./kibana-config/certs/kibana-server.crt -subj "/CN=kibana"
+# openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./kibana-config/certs/kibana-server.key -out ./kibana-config/certs/kibana-server.crt -subj "/CN=kibana"
+
+
+# sudo chmod -R 777 ./kibana-config/certs
+

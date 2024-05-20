@@ -1,0 +1,36 @@
+## JVM configuration
+################################################################
+## IMPORTANT: JVM heap size should be set based on the available memory
+## available in the system and the requirements of the application.
+## The default is fine for most development and testing purposes.
+################################################################
+
+## Heap Size
+-Xms1g
+-Xmx1g
+
+## Garbage Collector Configuration
+-XX:+UseG1GC
+-XX:G1ReservePercent=25
+-XX:InitiatingHeapOccupancyPercent=30
+
+## Custom settings
+# If you have custom settings that should override these defaults,
+# add them to the end of this file.
+
+-Djava.awt.headless=true
+-Dfile.encoding=UTF-8
+-Djna.nosys=true
+-Dio.netty.noUnsafe=true
+-Dio.netty.noKeySetOptimization=true
+-Dio.netty.recycler.maxCapacityPerThread=0
+-Dlog4j.shutdownHookEnabled=false
+-Dlog4j2.disable.jmx=true
+-XX:+AlwaysPreTouch
+-Xss1m
+-XX:-OmitStackTraceInFastThrow
+-Djava.io.tmpdir=${ES_TMPDIR}
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:HeapDumpPath=data
+-XX:ErrorFile=logs/hs_err_pid%p.log
+-XX:+UseCompressedOops

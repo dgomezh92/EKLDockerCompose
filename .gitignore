@@ -1,0 +1,26 @@
+# Ignorar todos los archivos de log
+*.log
+
+# Ignorar todos los certificados (ejemplo para .crt y .key)
+*.crt
+*.key
+
+# Ignorar directorios específicos que contengan logs o certificados
+logs/
+certs/
+
+# Ignorar cualquier archivo o directorio oculto
+.*.swp
+.*.swo
+.*.DS_Store
+
+# Ignorar archivos temporales de editores
+*~
+*.tmp
+
+# Ignorar cualquier archivo generado por el sistema operativo o herramientas de desarrollo
+.DS_Store
+Thumbs.db
+
+# Ignorar cualquier archivo específico de entorno
+.env

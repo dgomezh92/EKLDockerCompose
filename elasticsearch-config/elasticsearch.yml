@@ -1,0 +1,13 @@
+cluster.name: "elk-cluster"
+node.name: "elasticsearch-node1"
+path.data: /usr/share/elasticsearch/data
+path.logs: /usr/share/elasticsearch/logs
+network.host: 0.0.0.0
+http.port: 9200
+discovery.type: single-node
+ingest.geoip.downloader.enabled: false
+xpack.security.enabled: true
+xpack.security.http.ssl.enabled: true
+xpack.security.http.ssl.key: /usr/share/elasticsearch/config/certs/elasticsearch.key
+xpack.security.http.ssl.certificate: /usr/share/elasticsearch/config/certs/elasticsearch.crt
+xpack.security.http.ssl.certificate_authorities: [ "/usr/share/elasticsearch/config/certs/ca.crt" ]
